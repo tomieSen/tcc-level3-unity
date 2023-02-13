@@ -6,10 +6,11 @@ using UnityEngine;
 public class move : MonoBehaviour
 {
     Vector3 direction = new();
-    Vector3 aux = new();
+    Vector3 aux = new(), lookposition =new();
     float rotY = 0;
     public float velocidade, girar;
     public CharacterController characterController;
+    public Transform go;
     // Start is called before the first frame update
     void Start()
     {
@@ -19,6 +20,12 @@ public class move : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        Ray raio = Camera.main.ScreenPointToRay(Input.mousePosition);
+        RaycastHit hit;
+        if (Physics.Raycast(raio, out hit)){
+            lookposition = hit.transform.position;
+            lookposition.y = transform.position.y;
+        }
         direction = Input.GetAxis("Vertical") * velocidade * transform.forward;
         rotY = (Input.GetAxis("Horizontal") * girar);
     }
@@ -27,7 +34,8 @@ public class move : MonoBehaviour
     {
         aux.y -= 5 * Time.deltaTime;
         direction.y = aux.y;
-        transform.Rotate(0, rotY, 0);
+        //transform.Rotate(0, rotY, 0);
+        go.LookAt(lookposition);
 
         characterController.Move(direction*Time.deltaTime);
     }
